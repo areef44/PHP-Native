@@ -141,4 +141,51 @@ function cari($keyword)
     return query($query);
 }
 
+
+function registrasi($data)
+{
+    global $conn;
+
+    $username = $data["username"];
+
+    $password = $data["password"];
+
+    $password2 = $data["password2"];
+
+
+    //cek username sudah ada atau belum
+    $query = "SELECT username FROM users
+              WHERE username ='$username'";
+    $result = pg_query($conn, $query);
+
+    if (pg_fetch_assoc($result)) {
+        echo "<script>
+             alert('username telah dipakai');
+             </script>";
+        return false;
+    }
+
+    //cek konfirmasi password
+    if ($password !== $password2) {
+        echo "<script>
+             alert('konfirmasi password tidak sesuai');
+             </script>";
+        return false;
+    }
+
+    //enkripsi password
+    $password = password_hash($password, PASSWORD_DEFAULT);
+
+    //tambahkan userbaru ke database
+    $query = "INSERT INTO users (username, password) VALUES ('$username', '$password')";
+
+    $result = pg_query($conn, $query);
+
+    echo "<script>
+        alert('user berhasil ditambahkan');
+        </script>";
+
+    return $result;
+}
+
 ?>
