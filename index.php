@@ -1,5 +1,12 @@
 <?php
 
+session_start();
+
+if (!isset($_SESSION["login"])) {
+    header("Location: login.php");
+    exit;
+}
+
 require_once 'function.php';
 
 $siswa = query("SELECT * FROM siswa ORDER BY id DESC");
@@ -21,7 +28,7 @@ if (isset($_POST["cari"])) {
 
 <body>
 
-
+    <a href="logout.php">Log Out</a>
 
     <a href="tambah.php">Tambah Data</a>
 

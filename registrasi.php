@@ -50,7 +50,7 @@ if (isset($_POST["register"])) {
             </li>
             <li>
                 <label for="password2">konfirmasi password :</label>
-                <input type="password2" name="password2" id="password2">
+                <input type="password" name="password2" id="password2">
             </li>
             <li>
                 <button type="submit" name="register">Daftar</button>
