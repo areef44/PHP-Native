@@ -9,7 +9,35 @@ if (!isset($_SESSION["login"])) {
 
 require_once 'function.php';
 
-$siswa = query("SELECT * FROM siswa ORDER BY id DESC");
+//pagination postgress
+//konfigurasi
+$jumlahDataPerHalaman = 2;
+
+//hitung total semua data
+$jumlahData = count(query("SELECT * FROM siswa"));
+
+//pembulatan keatas untuk pembuatan jumlah halaman
+$jumlahHalaman = ceil($jumlahData / $jumlahDataPerHalaman);
+
+//versi biasa
+// if (isset($_GET["halaman"])) {
+//     //menangkap halaman dari URL
+//     $halamanAktif  = $_GET["halaman"];
+// } else {
+//     //jadikan halaman index halaman url 1
+//     $halamanAktif = 1;
+// }
+
+//versi ternary
+$halamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
+
+//mencari awal data menggunakan pagination
+$awalData = ($jumlahDataPerHalaman * $halamanAktif) - $jumlahDataPerHalaman;
+
+
+$siswa = query("SELECT * FROM siswa LIMIT $jumlahDataPerHalaman OFFSET $awalData");
+
+
 
 //tombol cari ditekan 
 if (isset($_POST["cari"])) {
@@ -32,10 +60,48 @@ if (isset($_POST["cari"])) {
 
     <a href="tambah.php">Tambah Data</a>
 
+    <br>
+
     <form action="" method="post">
         <input type="text" name="keyword" size="40px" autofocus placeholder="masukkan keyword pencarian" autocomplete="off">
         <button type="submit" name="cari">Cari!</button>
     </form>
+
+
+    <br><br>
+
+
+    <!-- Arrow Navigation previous -->
+    <?php if ($halamanAktif > 1) : ?>
+
+        <a href="?halaman=<?= $halamanAktif - 1; ?>">&laquo;</a>
+
+    <?php endif; ?>
+
+
+    <!-- Navigasi Pagination -->
+    <?php for ($i = 1; $i <= $jumlahHalaman; $i++) : ?>
+
+        <?php if ($i == $halamanAktif) : ?>
+
+            <a href="?halaman=<?= $i; ?>" style="font-weight:bold; color:red"><?= $i; ?></a>
+
+        <?php else : ?>
+
+            <a href="?halaman=<?= $i; ?>"><?= $i; ?></a>
+
+        <?php endif; ?>
+
+    <?php endfor; ?>
+
+
+    <!-- Arrow Navigation next -->
+    <?php if ($halamanAktif < $jumlahHalaman) : ?>
+
+        <a href="?halaman=<?= $halamanAktif + 1; ?>">&raquo;</a>
+
+    <?php endif; ?>
+
 
 
     <h1>
